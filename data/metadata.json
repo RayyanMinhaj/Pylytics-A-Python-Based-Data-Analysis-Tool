@@ -1,0 +1,36 @@
+{
+    "iris": {
+        "file_path": "data\\iris\\iris.csv",
+        "rows": 150,
+        "columns": 6,
+        "column_names": [
+            "Id",
+            "SepalLengthCm",
+            "SepalWidthCm",
+            "PetalLengthCm",
+            "PetalWidthCm",
+            "Species"
+        ],
+        "last_modified": "2025-06-16T14:25:38.034999"
+    },
+    "titanic": {
+        "file_path": "data\\titanic\\titanic.csv",
+        "rows": 891,
+        "columns": 12,
+        "column_names": [
+            "PassengerId",
+            "Survived",
+            "Pclass",
+            "Name",
+            "Sex",
+            "Age",
+            "SibSp",
+            "Parch",
+            "Ticket",
+            "Fare",
+            "Cabin",
+            "Embarked"
+        ],
+        "last_modified": "2025-06-16T14:30:52.379213"
+    }
+}
