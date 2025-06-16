@@ -33,7 +33,7 @@ git clone https://github.com/yourusername/Pylytics.git
 cd Pylytics
 ```
 
-3. Install dependencies:
+2. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
@@ -47,11 +47,11 @@ python src/main.py
 
 ### Available Commands (for now!)
 
-- `load <file_path> <dataset_name>` - Load a dataset from CSV file
+- `load <file_path> <dataset_name>` - Load a dataset (CSV file)
 - `list` - List all loaded datasets
 - `view <dataset_name> [n_rows]` - View first N rows of a dataset
-- `remove <dataset_name>` - Remove a dataset
-- `help` - Show help message
+- `remove <dataset_name>` - Remove a dataset from memory
+- `help` - List all available commands
 - `exit` - Exit the program
 
 ### Example - Loading a Dataset
