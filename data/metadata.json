@@ -32,5 +32,19 @@
             "Species"
         ],
         "last_modified": "2025-06-16T15:02:59.699758"
+    },
+    "iris2": {
+        "file_path": "data\\iris2\\iris2.csv",
+        "rows": 150,
+        "columns": 6,
+        "column_names": [
+            "Id",
+            "SepalLengthCm",
+            "SepalWidthCm",
+            "PetalLengthCm",
+            "PetalWidthCm",
+            "Species"
+        ],
+        "last_modified": "2025-06-16T20:33:33.890796"
     }
 }

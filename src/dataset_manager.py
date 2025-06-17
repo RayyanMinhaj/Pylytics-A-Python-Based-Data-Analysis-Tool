@@ -35,9 +35,12 @@ class DatasetManager:
         self._ensure_data_dir()
         self._load_metadata()
 
+
+
+
     def _ensure_data_dir(self) -> None:
         """Create the data directory if it doesn't exist."""
-        self.data_dir.mkdir(parents=True, exist_ok=True)
+        self.data_dir.mkdir(parents=True, exist_ok=True) # It'll always return True since were passing "/data" in constructor
 
     def _load_metadata(self) -> None:
         """
@@ -57,6 +60,10 @@ class DatasetManager:
         """Save the current metadata to a JSON file."""
         with open(self.metadata_file, 'w') as f:
             json.dump(self.metadata, f, indent=4)
+
+
+
+
 
     def load_dataset(self, file_path: str, dataset_name: str) -> bool:
         """
@@ -111,6 +118,7 @@ class DatasetManager:
             print(f"Error loading dataset: {str(e)}")
             return False
 
+
     def list_datasets(self) -> List[Tuple[str, Dict]]:
         """
         Get a list of all loaded datasets with their metadata.
@@ -127,6 +135,7 @@ class DatasetManager:
             dataset_list.append((name, info))
             
         return dataset_list
+
 
     def view_dataset(self, dataset_name: str, n_rows: int = 5) -> Optional[pd.DataFrame]:
         """
@@ -155,6 +164,7 @@ class DatasetManager:
             
         # Return first N rows
         return self.datasets[dataset_name].head(n_rows)
+
 
     def remove_dataset(self, dataset_name: str) -> bool:
         """
@@ -198,3 +208,30 @@ class DatasetManager:
         except Exception as e:
             print(f"Error removing dataset: {str(e)}")
             return False 
+
+    # We created this method to fetch the dataset from metadata file to be used in data_explorer.py
+    def get_dataset(self, dataset_name: str) -> Optional[pd.DataFrame]:
+        """
+        Get a dataset by name. If not in memory, load it from disk.
+        
+        Args:
+            dataset_name (str): Name of the dataset to get
+            
+        Returns:
+            Optional[pd.DataFrame]: The dataset if found, None otherwise
+        """
+        # Check if dataset exists in metadata
+        if dataset_name not in self.metadata:
+            print(f"Dataset '{dataset_name}' not found")
+            return None
+            
+        # If dataset is not in memory, load it from disk
+        if dataset_name not in self.datasets:
+            try:
+                file_path = self.metadata[dataset_name]["file_path"]
+                self.datasets[dataset_name] = pd.read_csv(file_path)
+            except Exception as e:
+                print(f"Error loading dataset from disk: {str(e)}")
+                return None
+            
+        return self.datasets[dataset_name] 
