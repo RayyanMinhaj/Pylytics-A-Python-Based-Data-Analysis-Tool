@@ -179,16 +179,18 @@ def main():
                         freq_counts = data_explorer.get_frequency_counts(dataset_name)
                         
                         if freq_counts:
-                            print(f"Frequency counts for '{dataset_name}':")
+                            print(f"{CYAN}Frequency counts for '{dataset_name}':{RESET}")
                         
                             for col, info in freq_counts.items():
-                                print(f"- {col} ({info['total_unique']} unique values):")
+                                print(f"- {GREEN}{col} ({info['total_unique']} unique values):{RESET}")
                                 
-                                for value, count in list(info['counts'].items())[:5]:  # Show top 5
+                                for value, count in list(info['counts'].items())[:5]:  # Showing top 5 for conciseness
                                     print(f"  - {value}: {count}")
                                 
                                 if info['total_unique'] > 5:
                                     print("  - ...")
+                            
+                                print("\n")
                         
                             print("\n")
                             

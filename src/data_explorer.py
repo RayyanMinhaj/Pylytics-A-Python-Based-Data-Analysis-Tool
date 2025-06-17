@@ -158,7 +158,7 @@ class DataExplorer:
             if df is None:
                 raise ValueError(f"Dataset '{dataset_name}' not found")
             
-            # Step 2: Apply the filter condition - Im sure there might be a better way to do this but the df.query seems like a robust appraoch at the moment.
+            # Step 2: Apply the filter condition
             filtered_df = df.query(condition)
             
             # Step 3: Return None if no rows match the condition
