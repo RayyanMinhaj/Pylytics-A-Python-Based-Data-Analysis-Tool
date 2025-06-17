@@ -51,8 +51,12 @@ python src/main.py
 - `list` - List all loaded datasets
 - `view <dataset_name> [n_rows]` - View first N rows of a dataset
 - `remove <dataset_name>` - Remove a dataset from memory
+- `analyze <dataset_name>` - Interactive data analysis (summary stats, missing data, frequency counts, filtering)
+- `clean <dataset_name>` - Data cleaning (remove duplicates, handle missing values)
 - `help` - List all available commands
 - `exit` - Exit the program
+
+---
 
 ### Example - Loading a Dataset
 
@@ -75,3 +79,36 @@ pylytics> view my_dataset 10
 ```
 pylytics> remove my_dataset
 ```
+
+---
+
+## Example - Filtering and Cleaning a Dataset
+
+1. **Filter a dataset:**
+You can filter your dataset using custom conditions (similar to pandas query syntax).  
+
+```
+pylytics> analyze my_dataset
+Select analysis type:
+...
+4. Filter data
+
+Enter your choice (1-5): 4
+Enter filter condition (e.g., age > 25 and country == "USA"):
+> sepal_length > 5.0
+```
+
+2. **Clean duplicates:**
+```
+pylytics> analyze my_dataset
+Select analysis type:
+...
+5. Clean duplicates
+
+Enter your choice (1-5): 5
+Specify columns for duplicate check (leave empty for all columns):
+Enter column names separated by comma:
+> 
+```
+
+---
