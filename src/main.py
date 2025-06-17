@@ -125,13 +125,11 @@ def main():
                 print("2. Missing data report")
                 print("3. Frequency counts")
                 print("4. Filter data")
-                print("5. Clean duplicates")
                 
                 try:
-                    choice = input("Enter your choice (1-5): ").strip()
-                    print("\n")  
+                    choice = input("Enter your choice (1-4): ").strip()
+                    print()  # Add blank line for spacing
                     
-                    # Summary statistics
                     if choice == "1":
                         stats = data_explorer.get_summary_statistics(dataset_name)
                         
@@ -148,7 +146,6 @@ def main():
 
                     
                     
-                    # Missing data report
                     elif choice == "2":
                         missing_info = data_explorer.get_missing_data_info(dataset_name)
                         
@@ -167,7 +164,6 @@ def main():
                     
                     
                     
-                    # Frequency counts
                     elif choice == "3":
                         freq_counts = data_explorer.get_frequency_counts(dataset_name)
                         
@@ -175,20 +171,19 @@ def main():
                             print(f"Frequency counts for '{dataset_name}':")
                         
                             for col, info in freq_counts.items():
-                                print(f"- {CYAN}{col}: ({info['total_unique']} unique values):{RESET}")
+                                print(f"- {col} ({info['total_unique']} unique values):")
                                 
-                                for value, count in list(info['counts'].items())[:5]:  # ONly showing top 5 for conciseness
+                                for value, count in list(info['counts'].items())[:5]:  # Show top 5
                                     print(f"  - {value}: {count}")
                                 
                                 if info['total_unique'] > 5:
                                     print("  - ...")
                         
-                            print("\n")
+                            print()
                             
                     
                     
                     
-                    # Filter data
                     elif choice == "4":
                         print(f"{CYAN}Enter filter condition (e.g., age > 25 and country == \"USA\"):{RESET}")
                         
@@ -199,70 +194,99 @@ def main():
                             print(f"\n{CYAN}Filtered results ({len(filtered_df)} rows):{RESET}")
                             print(filtered_df.head())
                             
-                        
-                            print("\n")
-
-                    
-                    
-                    
-                    
-                    
-                    # Clean duplicates
-                    elif choice == "5":
-                        print(f"{CYAN}Specify columns for duplicate check (leave empty for all columns):{RESET}")
-                        print("Enter column names separated by comma:")
-                        cols = input("> ").strip()
-                        subset = [col.strip() for col in cols.split(',')] if cols.strip() else None
-                        cleaned_df, duplicates_removed = data_explorer.clean_duplicates(dataset_name, subset)
-                        if cleaned_df is not None:
-                            print(f"\n{GREEN}Removed {duplicates_removed} duplicate rows{RESET}")
-                            if duplicates_removed > 0:
-                                print(f"\n{CYAN}First few rows of cleaned dataset:{RESET}")
-                                print(cleaned_df.head())
-                            print("\n")
+                            print("\nWould you like to save this filtered dataset? (y/n)")
+                            save_choice = input("> ").strip().lower()
                             
+                            if save_choice == 'y':
+                                #IMPLEMENT THIS FUNCTIONALITY!!!!!!!
+                                print("\nEnter name for the filtered dataset:")
+                                new_name = input("> ").strip()
+                                dataset_manager.add_dataset(new_name, filtered_df)
+                                print(f"{GREEN}Filtered dataset saved as '{new_name}'{RESET}")
+                            print()
                     
                     
                     
                     else:
-                        print(f"{RED}Invalid choice. Please enter a number between 1 and 5.{RESET}\n")
+                        print(f"{RED}Invalid choice. Please enter a number between 1 and 4.{RESET}\n")
                         
                 except ValueError as e:
                     print(f"{RED}Error: {str(e)}{RESET}\n")
                     
-            elif command == "filter":
-                if len(args) < 2:
-                    print(f"{YELLOW}Usage: filter <dataset_name> <condition>{RESET}")
-                    print(f"{YELLOW}Example: filter iris 'sepal_length > 5'{RESET}")
-                    print("\n")
-                    continue
-                    
-                dataset_name = args[0]
-                condition = ' '.join(args[1:])
-                
-                filtered_df = data_explorer.filter_dataset(dataset_name, condition)
-                if filtered_df is not None:
-                    print(f"\n{CYAN}Filtered results ({len(filtered_df)} rows):{RESET}")
-                    print(filtered_df.head())
-                    print("\n")
                     
             elif command == "clean":
-                if len(args) != 2 or args[0].lower() != "duplicates":
-                    print(f"{YELLOW}Usage: clean duplicates <dataset_name>{RESET}")
-                    print(f"{YELLOW}Example: clean duplicates my_dataset{RESET}")
+                if len(args) != 1:
+                    print(f"{YELLOW}Usage: clean <dataset_name>{RESET}")
+                    print(f"{YELLOW}Example: clean my_dataset{RESET}")
                     print("\n")
                     continue
-                    
-                dataset_name = args[1]
-                cleaned_df, duplicates_removed = data_explorer.clean_duplicates(dataset_name)
                 
-                if cleaned_df is not None:
-                    print(f"{GREEN}Removed {duplicates_removed} duplicate rows from '{dataset_name}'{RESET}")
-                    if duplicates_removed > 0:
-                        print(f"\n{CYAN}First few rows of cleaned dataset:{RESET}")
-                        print(cleaned_df.head())
-                    print("\n")
+                dataset_name = args[0]
+                print("\nSelect cleaning option:")
+                print("1. Remove duplicates")
+                print("2. Handle missing values")
+                
+                
+                clean_choice = input("Enter your choice (1-2): ").strip()
+                
+                
+                if clean_choice == "1":
+                    print(f"{CYAN}Specify columns for duplicate check (leave empty for all columns):{RESET}")
+                    print("Enter column names separated by comma:")
+                    cols = input("> ").strip()
                     
+                    subset = [col.strip() for col in cols.split(',')] if cols.strip() else None
+                    
+                    cleaned_df, duplicates_removed = data_explorer.clean_duplicates(dataset_name, subset)
+                    
+                    if cleaned_df is not None:
+                        print(f"\n{GREEN}Removed {duplicates_removed} duplicate rows{RESET}")
+                        if duplicates_removed > 0:
+                            print(f"\n{CYAN}First few rows of cleaned dataset:{RESET}")
+                            print(cleaned_df.head())
+                        print("\n")
+                
+                
+                elif clean_choice == "2":
+                    print("\nHandle missing values:")
+                    print("1. Remove rows with missing values")
+                    print("2. Fill missing values with mean (numerical columns)")
+                    print("3. Fill missing values with mode (categorical columns)")
+
+                    missing_choice = input("Enter your choice (1-3): ").strip()
+
+                    if missing_choice == "1":
+                        cleaned_df = data_explorer.remove_rows_with_missing(dataset_name)
+                        
+                        if cleaned_df is not None:
+                            print(f"\n{GREEN}Rows with missing values dropped. Remaining rows: {len(cleaned_df)}{RESET}")
+                            print(cleaned_df.head())
+                            print("\n")
+                    
+                    
+                    elif missing_choice == "2":
+                        cleaned_df = data_explorer.fill_missing_with_mean(dataset_name)
+                        
+                        if cleaned_df is not None:
+                            print(f"\n{GREEN}Missing values in numeric columns filled with column mean.{RESET}")
+                            print(cleaned_df.head())
+                            print("\n")
+                    
+                    
+                    elif missing_choice == "3":
+                        cleaned_df = data_explorer.fill_missing_with_mode(dataset_name)
+                        
+                        if cleaned_df is not None:
+                            print(f"\n{GREEN}Missing values in categorical columns filled with column mode.{RESET}")
+                            print(cleaned_df.head())
+                            print("\n")
+                    
+                    else:
+                        print(f"{RED}Invalid choice. Please enter a number between 1 and 3.{RESET}\n")
+                    
+            
+            
+            
             elif command == "remove":
                 if len(args) != 1:
                     print(f"{YELLOW}Usage: remove <dataset_name>{RESET}")

@@ -21,6 +21,8 @@ class DataExplorer:
         """
         self.dataset_manager = dataset_manager
         
+
+        
     def get_summary_statistics(self, dataset_name: str) -> Dict[str, Dict]:
         """
         Calculate summary statistics for numerical columns.
@@ -123,6 +125,7 @@ class DataExplorer:
             # Step 4: Calculate frequency counts for each categorical column
             for col in categorical_cols:
                 value_counts = df[col].value_counts() # Pandas function that counts how many times each unique value appears in a column.
+                
                 freq_counts[col] = {
                     'counts': value_counts.to_dict(),
                     'total_unique': len(value_counts)
@@ -155,7 +158,7 @@ class DataExplorer:
             if df is None:
                 raise ValueError(f"Dataset '{dataset_name}' not found")
             
-            # Step 2: Apply the filter condition
+            # Step 2: Apply the filter condition - Im sure there might be a better way to do this but the df.query seems like a robust appraoch at the moment.
             filtered_df = df.query(condition)
             
             # Step 3: Return None if no rows match the condition
@@ -168,6 +171,10 @@ class DataExplorer:
         except Exception as e:
             print(f"Error filtering dataset: {str(e)}")
             return None
+
+
+
+
 
     def clean_duplicates(self, dataset_name: str, subset: Optional[List[str]] = None) -> Tuple[Optional[pd.DataFrame], int]:
         """
@@ -203,4 +210,88 @@ class DataExplorer:
             
         except Exception as e:
             print(f"Error removing duplicates: {str(e)}")
-            return None, 0 
+            return None, 0
+
+
+
+    def remove_rows_with_missing(self, dataset_name: str):
+        """
+        Remove rows with any missing values from the dataset.
+        Args:
+            dataset_name: Name of the dataset to clean
+        Returns:
+            DataFrame with rows containing missing values removed
+        """
+        # Step 1: Get dataset from manager
+        df = self.dataset_manager.get_dataset(dataset_name)
+        
+        if df is None:
+            print(f"Dataset '{dataset_name}' not found.")
+            return None
+        
+        # Step 2: Remove rows with missing values
+        return df.dropna()
+
+
+
+
+    def fill_missing_with_mean(self, dataset_name: str):
+        """
+        Fill missing values in numerical columns with the mean of each column.
+        Args:
+            dataset_name: Name of the dataset to clean
+        Returns:
+            DataFrame with missing values in numerical columns filled with mean
+        """
+        
+        # Step 1: Get dataset from manager
+        df = self.dataset_manager.get_dataset(dataset_name)
+        if df is None:
+            print(f"Dataset '{dataset_name}' not found.")
+            return None
+        
+        # Step 2: Copy dataset
+        cleaned_df = df.copy()
+        
+        # Step 3: Fill missing values with mean
+        num_cols = cleaned_df.select_dtypes(include=['int64', 'float64']).columns
+        
+        for col in num_cols:
+            mean_val = cleaned_df[col].mean()
+            cleaned_df[col].fillna(mean_val, inplace=True)
+        
+        return cleaned_df
+
+    
+    
+    
+    
+    
+    def fill_missing_with_mode(self, dataset_name: str):
+        """
+        Fill missing values in categorical columns with the mode (most frequent value).
+        Args:
+            dataset_name: Name of the dataset to clean
+        Returns:
+            DataFrame with missing values in categorical columns filled with mode
+        """
+        
+        # Step 1: Get dataset from manager
+        df = self.dataset_manager.get_dataset(dataset_name)
+        if df is None:
+            print(f"Dataset '{dataset_name}' not found.")
+            return None
+        
+        # Step 2: Copy dataset
+        cleaned_df = df.copy()
+        
+        # Step 3: Fill missing values with mode
+        cat_cols = cleaned_df.select_dtypes(include=['object', 'category']).columns
+        
+        for col in cat_cols:
+            mode_val = cleaned_df[col].mode(dropna=True)
+            
+            if not mode_val.empty:
+                cleaned_df[col].fillna(mode_val[0], inplace=True)
+        
+        return cleaned_df 
