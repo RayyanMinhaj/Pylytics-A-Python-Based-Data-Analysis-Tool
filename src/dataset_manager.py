@@ -183,14 +183,11 @@ class DatasetManager:
             bool: True if successful, False otherwise
         """
         try:
-            # Step 1: Check if dataset exists
-            if dataset_name not in self.datasets:
+            # Step 1: Check if dataset exists in metadata
+            if dataset_name not in self.metadata:
                 raise ValueError(f"Dataset '{dataset_name}' not found")
-                
-            # Step 2: Remove from memory
-            del self.datasets[dataset_name] 
             
-            # Step 3: Remove dataset files
+            # Step 2: Remove dataset files
             dataset_dir = self.data_dir / dataset_name
             if dataset_dir.exists():
                 # Delete all files in the dataset directory
@@ -199,7 +196,7 @@ class DatasetManager:
                 # Remove the empty directory
                 dataset_dir.rmdir()
             
-            # Step 4: Update metadata
+            # Step 3: Update metadata
             del self.metadata[dataset_name]
             self._save_metadata()
             
@@ -207,7 +204,7 @@ class DatasetManager:
             
         except Exception as e:
             print(f"Error removing dataset: {str(e)}")
-            return False 
+            return False
 
     # We created this method to fetch the dataset from metadata file to be used in data_explorer.py
     def get_dataset(self, dataset_name: str) -> Optional[pd.DataFrame]:
@@ -230,8 +227,58 @@ class DatasetManager:
             try:
                 file_path = self.metadata[dataset_name]["file_path"]
                 self.datasets[dataset_name] = pd.read_csv(file_path)
+            
             except Exception as e:
                 print(f"Error loading dataset from disk: {str(e)}")
                 return None
             
         return self.datasets[dataset_name] 
+
+
+
+
+
+    def update_dataset(self, dataset_name: str, new_df: pd.DataFrame) -> bool:
+        """
+        Update an existing dataset with new data.
+        
+        Steps:
+        1. Check if dataset exists
+        2. Update dataset in memory
+        3. Save updated dataset to file
+        4. Update metadata
+        
+        Args:
+            dataset_name (str): Name of the dataset to update
+            new_df (pd.DataFrame): New data to replace the existing dataset
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            # Step 1: Check if dataset exists
+            if dataset_name not in self.metadata:
+                raise ValueError(f"Dataset '{dataset_name}' not found")
+                
+            # Step 2: Update dataset in memory
+            self.datasets[dataset_name] = new_df
+            
+            # Step 3: Save updated dataset to file
+            file_path = self.metadata[dataset_name]["file_path"]
+            new_df.to_csv(file_path, index=False)
+            
+            # Step 4: Update metadata with new information
+            self.metadata[dataset_name] = {
+                "file_path": file_path,
+                "rows": len(new_df),
+                "columns": len(new_df.columns),
+                "column_names": list(new_df.columns),
+                "last_modified": pd.Timestamp.now().isoformat()
+            }
+            self._save_metadata()
+            
+            return True
+            
+        except Exception as e:
+            print(f"Error updating dataset: {str(e)}")
+            return False 

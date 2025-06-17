@@ -34,7 +34,12 @@ def print_help():
     print("      2. Missing data report")
     print("      3. Frequency counts")
     print("      4. Filter data (e.g., 'age > 25 and country == \"USA\"')")
-    print("      5. Clean duplicates (remove duplicate rows)")
+
+    # Data Cleaning Commands
+    print(f"\n{PURPLE}Data Cleaning:{RESET}")
+    print("clean [dataset_name]")
+    print("      1. Remove duplicates")
+    print("      2. Handle missing values")
     
     # System Commands
     print(f"\n{PURPLE}System:{RESET}")
@@ -95,6 +100,9 @@ def main():
                         i+=1
                     print("\n")
                     
+
+
+                    
             elif command == "view":
                 if len(args) < 1 or len(args) > 2:
                     print(f"{YELLOW}Usage: view <dataset_name> [n_rows]{RESET}")
@@ -110,7 +118,10 @@ def main():
                     print(f"\n{CYAN}First {n_rows} rows of '{dataset_name}':{RESET}")
                     print(df)
                     print("\n")
-                    
+
+
+
+
             elif command == "analyze":
                 if len(args) != 1:
                     print(f"{YELLOW}Usage: analyze <dataset_name>{RESET}")
@@ -179,7 +190,7 @@ def main():
                                 if info['total_unique'] > 5:
                                     print("  - ...")
                         
-                            print()
+                            print("\n")
                             
                     
                     
@@ -198,12 +209,11 @@ def main():
                             save_choice = input("> ").strip().lower()
                             
                             if save_choice == 'y':
-                                #IMPLEMENT THIS FUNCTIONALITY!!!!!!!
                                 print("\nEnter name for the filtered dataset:")
                                 new_name = input("> ").strip()
-                                dataset_manager.add_dataset(new_name, filtered_df)
-                                print(f"{GREEN}Filtered dataset saved as '{new_name}'{RESET}")
-                            print()
+                                dataset_manager.update_dataset(new_name, filtered_df)
+                                print(f"{GREEN}Filtered dataset updated as '{new_name}'{RESET}")
+                            print("\n")
                     
                     
                     
@@ -244,6 +254,12 @@ def main():
                         if duplicates_removed > 0:
                             print(f"\n{CYAN}First few rows of cleaned dataset:{RESET}")
                             print(cleaned_df.head())
+
+                            print("\nWould you like to update the original dataset? (y/n)")
+                            update_choice = input("> ").strip().lower()
+                            if update_choice == 'y':
+                                dataset_manager.update_dataset(dataset_name, cleaned_df)
+                                print(f"{GREEN}Dataset '{dataset_name}' updated successfully{RESET}")
                         print("\n")
                 
                 
@@ -261,6 +277,13 @@ def main():
                         if cleaned_df is not None:
                             print(f"\n{GREEN}Rows with missing values dropped. Remaining rows: {len(cleaned_df)}{RESET}")
                             print(cleaned_df.head())
+
+
+                            print("\nWould you like to update the original dataset? (y/n)")
+                            update_choice = input("> ").strip().lower()
+                            if update_choice == 'y':
+                                dataset_manager.update_dataset(dataset_name, cleaned_df)
+                                print(f"{GREEN}Dataset '{dataset_name}' updated successfully{RESET}")
                             print("\n")
                     
                     
@@ -270,6 +293,13 @@ def main():
                         if cleaned_df is not None:
                             print(f"\n{GREEN}Missing values in numeric columns filled with column mean.{RESET}")
                             print(cleaned_df.head())
+
+
+                            print("\nWould you like to update the original dataset? (y/n)")
+                            update_choice = input("> ").strip().lower()
+                            if update_choice == 'y':
+                                dataset_manager.update_dataset(dataset_name, cleaned_df)
+                                print(f"{GREEN}Dataset '{dataset_name}' updated successfully{RESET}")
                             print("\n")
                     
                     
@@ -279,6 +309,13 @@ def main():
                         if cleaned_df is not None:
                             print(f"\n{GREEN}Missing values in categorical columns filled with column mode.{RESET}")
                             print(cleaned_df.head())
+
+                            
+                            print("\nWould you like to update the original dataset? (y/n)")
+                            update_choice = input("> ").strip().lower()
+                            if update_choice == 'y':
+                                dataset_manager.update_dataset(dataset_name, cleaned_df)
+                                print(f"{GREEN}Dataset '{dataset_name}' updated successfully{RESET}")
                             print("\n")
                     
                     else:
@@ -295,16 +332,25 @@ def main():
                     continue
                     
                 dataset_name = args[0]
+                print(dataset_name)
+
                 if dataset_manager.remove_dataset(dataset_name):
                     print(f"{GREEN}Successfully removed the dataset: '{dataset_name}'\n{RESET}")
                     
+            
             else:
                 print(f"{RED}Unknown command: {command}{RESET}")
                 print(f"{YELLOW}Type 'help' to see all available commands{RESET}")
                 print("\n")
                 
+        
+        
         except Exception as e:
             print(f"{RED}Error: {str(e)}{RESET}")
+
+
+
+
 
 if __name__ == "__main__":
     main() 

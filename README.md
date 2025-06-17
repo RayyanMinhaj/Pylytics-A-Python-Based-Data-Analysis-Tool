@@ -51,6 +51,8 @@ python src/main.py
 - `list` - List all loaded datasets
 - `view <dataset_name> [n_rows]` - View first N rows of a dataset
 - `remove <dataset_name>` - Remove a dataset from memory
+- `analyze <dataset_name>` - Interactive data analysis (summary stats, missing data, frequency counts, filtering)
+- `clean <dataset_name>` - Data cleaning (remove duplicates, handle missing values)
 - `help` - List all available commands
 - `exit` - Exit the program
 
