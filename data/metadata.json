@@ -1,4 +1,19 @@
 {
+    "iris": {
+        "file_path": "data\\iris\\iris.csv",
+        "rows": 150,
+        "columns": 6,
+        "column_names": [
+            "Id",
+            "SepalLengthCm",
+            "SepalWidthCm",
+            "PetalLengthCm",
+            "PetalWidthCm",
+            "Species"
+        ],
+        "last_modified": "2025-06-18T20:12:23.932628",
+        "analyses_performed": []
+    },
     "titanic": {
         "file_path": "data\\titanic\\titanic.csv",
         "rows": 891,
@@ -17,20 +32,7 @@
             "Cabin",
             "Embarked"
         ],
-        "last_modified": "2025-06-17T18:40:22.849253"
-    },
-    "iris": {
-        "file_path": "data\\iris\\iris.csv",
-        "rows": 150,
-        "columns": 6,
-        "column_names": [
-            "Id",
-            "SepalLengthCm",
-            "SepalWidthCm",
-            "PetalLengthCm",
-            "PetalWidthCm",
-            "Species"
-        ],
-        "last_modified": "2025-06-17T18:40:35.772952"
+        "last_modified": "2025-06-18T20:12:38.388857",
+        "analyses_performed": []
     }
 }
