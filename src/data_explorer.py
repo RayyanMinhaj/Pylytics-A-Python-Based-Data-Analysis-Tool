@@ -48,9 +48,15 @@ class DataExplorer:
             # Step 4: Calculate statistics for each numerical column
             for col in numerical_cols:
                 stats[col] = {
-                    'mean': round(float(df[col].mean()), 2),
-                    'median': round(float(df[col].median()), 2),
-                    'std': round(float(df[col].std()), 2)
+                    'count': int(df[col].count()),
+                    'mean': round(float(df[col].mean()), 4),
+                    'median': round(float(df[col].median()), 4),
+                    'std': round(float(df[col].std()), 4),
+                    'min': round(float(df[col].min()), 4),
+                    '25%': round(float(df[col].quantile(0.25)), 4),
+                    '50%': round(float(df[col].quantile(0.50)), 4),
+                    '75%': round(float(df[col].quantile(0.75)), 4),
+                    'max': round(float(df[col].max()), 4)
                 }
             
             return stats

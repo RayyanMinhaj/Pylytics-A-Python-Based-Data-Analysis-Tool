@@ -139,7 +139,7 @@ def main():
                 
                 try:
                     choice = input("Enter your choice (1-4): ").strip()
-                    print()  # Add blank line for spacing
+                    print() 
                     
                     if choice == "1":
                         stats = data_explorer.get_summary_statistics(dataset_name)
@@ -149,11 +149,17 @@ def main():
                             
                             for col, col_stats in stats.items():
                                 print(f"- {CYAN}{col}:{RESET}")
+                                print(f"  - Count: {col_stats['count']}")
                                 print(f"  - Mean: {col_stats['mean']}")
                                 print(f"  - Median: {col_stats['median']}")
                                 print(f"  - Std Dev: {col_stats['std']}")
+                                print(f"  - Min: {col_stats['min']}")
+                                print(f"  - 25%: {col_stats['25%']}")
+                                print(f"  - 50%: {col_stats['50%']}")
+                                print(f"  - 75%: {col_stats['75%']}")
+                                print(f"  - Max: {col_stats['max']}")
                                 print("\n")
-                            print("\n")
+                            #print("\n")
 
                     
                     
@@ -213,7 +219,8 @@ def main():
                             if save_choice == 'y':
                                 print("\nEnter name for the filtered dataset:")
                                 new_name = input("> ").strip()
-                                dataset_manager.update_dataset(new_name, filtered_df)
+                                analysis_desc = f"Filtered with condition: {condition}"
+                                dataset_manager.update_dataset(new_name, filtered_df, analysis_desc)
                                 print(f"{GREEN}Filtered dataset updated as '{new_name}'{RESET}")
                             print("\n")
                     
@@ -260,7 +267,8 @@ def main():
                             print("\nWould you like to update the original dataset? (y/n)")
                             update_choice = input("> ").strip().lower()
                             if update_choice == 'y':
-                                dataset_manager.update_dataset(dataset_name, cleaned_df)
+                                analysis_desc = f"Removed duplicates on columns: {', '.join(subset) if subset else 'all columns'}"
+                                dataset_manager.update_dataset(dataset_name, cleaned_df, analysis_desc)
                                 print(f"{GREEN}Dataset '{dataset_name}' updated successfully{RESET}")
                         print("\n")
                 
@@ -284,7 +292,8 @@ def main():
                             print("\nWould you like to update the original dataset? (y/n)")
                             update_choice = input("> ").strip().lower()
                             if update_choice == 'y':
-                                dataset_manager.update_dataset(dataset_name, cleaned_df)
+                                analysis_desc = "Removed rows with missing values"
+                                dataset_manager.update_dataset(dataset_name, cleaned_df, analysis_desc)
                                 print(f"{GREEN}Dataset '{dataset_name}' updated successfully{RESET}")
                             print("\n")
                     
@@ -300,7 +309,8 @@ def main():
                             print("\nWould you like to update the original dataset? (y/n)")
                             update_choice = input("> ").strip().lower()
                             if update_choice == 'y':
-                                dataset_manager.update_dataset(dataset_name, cleaned_df)
+                                analysis_desc = "Filled missing values in numeric columns with mean"
+                                dataset_manager.update_dataset(dataset_name, cleaned_df, analysis_desc)
                                 print(f"{GREEN}Dataset '{dataset_name}' updated successfully{RESET}")
                             print("\n")
                     
@@ -316,7 +326,8 @@ def main():
                             print("\nWould you like to update the original dataset? (y/n)")
                             update_choice = input("> ").strip().lower()
                             if update_choice == 'y':
-                                dataset_manager.update_dataset(dataset_name, cleaned_df)
+                                analysis_desc = "Filled missing values in categorical columns with mode"
+                                dataset_manager.update_dataset(dataset_name, cleaned_df, analysis_desc)
                                 print(f"{GREEN}Dataset '{dataset_name}' updated successfully{RESET}")
                             print("\n")
                     
@@ -339,6 +350,20 @@ def main():
                 if dataset_manager.remove_dataset(dataset_name):
                     print(f"{GREEN}Successfully removed the dataset: '{dataset_name}'\n{RESET}")
                     
+            
+            elif command == "report":
+                if len(args) != 1:
+                    print(f"{YELLOW}Usage: report <dataset_name>{RESET}")
+                    print(f"{YELLOW}Example: report my_dataset{RESET}")
+                    print("\n")
+                    continue
+                dataset_name = args[0]
+                try:
+                    from report_generator import generate_report
+                    report_path = generate_report(dataset_manager, data_explorer, dataset_name)
+                    print(f"{GREEN}Report generated and saved to: {report_path}{RESET}")
+                except Exception as e:
+                    print(f"{RED}Error generating report: {str(e)}{RESET}")
             
             else:
                 print(f"{RED}Unknown command: {command}{RESET}")

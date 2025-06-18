@@ -85,7 +85,7 @@ class DatasetManager:
         """
         try:
             # Step 1: Check if dataset name is already in use
-            if dataset_name in self.datasets:
+            if dataset_name in self.metadata:
                 raise ValueError(f"Dataset name '{dataset_name}' already exists")
 
             # Step 2: Read the CSV file
@@ -108,7 +108,8 @@ class DatasetManager:
                 "rows": len(df),
                 "columns": len(df.columns),
                 "column_names": list(df.columns),
-                "last_modified": pd.Timestamp.now().isoformat()
+                "last_modified": pd.Timestamp.now().isoformat(),
+                "analyses_performed": []
             }
             self._save_metadata()
             
@@ -238,7 +239,7 @@ class DatasetManager:
 
 
 
-    def update_dataset(self, dataset_name: str, new_df: pd.DataFrame) -> bool:
+    def update_dataset(self, dataset_name: str, new_df: pd.DataFrame, analysis_description: str = None) -> bool:
         """
         Update an existing dataset with new data.
         
@@ -251,6 +252,7 @@ class DatasetManager:
         Args:
             dataset_name (str): Name of the dataset to update
             new_df (pd.DataFrame): New data to replace the existing dataset
+            analysis_description (str): Description of the analysis performed on the dataset
             
         Returns:
             bool: True if successful, False otherwise
@@ -268,13 +270,17 @@ class DatasetManager:
             new_df.to_csv(file_path, index=False)
             
             # Step 4: Update metadata with new information
-            self.metadata[dataset_name] = {
+            if "analyses_performed" not in self.metadata[dataset_name]:
+                self.metadata[dataset_name]["analyses_performed"] = []
+            if analysis_description:
+                self.metadata[dataset_name]["analyses_performed"].append(analysis_description)
+            self.metadata[dataset_name].update({
                 "file_path": file_path,
                 "rows": len(new_df),
                 "columns": len(new_df.columns),
                 "column_names": list(new_df.columns),
                 "last_modified": pd.Timestamp.now().isoformat()
-            }
+            })
             self._save_metadata()
             
             return True

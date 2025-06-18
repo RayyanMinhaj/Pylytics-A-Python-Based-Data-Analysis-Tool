@@ -1,7 +1,7 @@
 {
     "titanic": {
         "file_path": "data\\titanic\\titanic.csv",
-        "rows": 891,
+        "rows": 147,
         "columns": 12,
         "column_names": [
             "PassengerId",
@@ -17,11 +17,16 @@
             "Cabin",
             "Embarked"
         ],
-        "last_modified": "2025-06-17T18:40:22.849253"
+        "last_modified": "2025-06-18T19:14:45.125738",
+        "analyses_performed": [
+            "Removed duplicates on columns: Ticket, Sex",
+            "Removed rows with missing values",
+            "Filled missing values in numeric columns with mean"
+        ]
     },
     "iris": {
         "file_path": "data\\iris\\iris.csv",
-        "rows": 150,
+        "rows": 85,
         "columns": 6,
         "column_names": [
             "Id",
@@ -31,6 +36,9 @@
             "PetalWidthCm",
             "Species"
         ],
-        "last_modified": "2025-06-17T18:40:35.772952"
+        "last_modified": "2025-06-18T18:13:37.738392",
+        "analyses_performed": [
+            "Filtered with condition: PetalWidthCm > 1.2"
+        ]
     }
 }
