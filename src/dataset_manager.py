@@ -274,6 +274,8 @@ class DatasetManager:
                 self.metadata[dataset_name]["analyses_performed"] = []
             if analysis_description:
                 self.metadata[dataset_name]["analyses_performed"].append(analysis_description)
+            
+            
             self.metadata[dataset_name].update({
                 "file_path": file_path,
                 "rows": len(new_df),

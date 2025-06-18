@@ -17,7 +17,7 @@ PyLytics/
     |   ├── data_explorer.py    #Core functions for data exploration and analysis
     |   ├── visualizer.py       #Core functions for visualisation
     |   ├── main.py             #Command-line interface logic
-    |   └── utils.py           #Utility functions (e.g., loading/saving data)
+    |   └── report_genrator.py           #Generates a summary report for dataset
     ├── tests/        #Will work on it if time allows
     ├── config/     
     |   └── config.json  
@@ -55,7 +55,7 @@ python src/main.py
 - `clean <dataset_name>` - Data cleaning (remove duplicates, handle missing values)
 - `help` - List all available commands
 - `exit` - Exit the program
-
+- `report <dataset_name>` - Generate a detailed analysis report for a dataset
 ---
 
 ### Example - Loading a Dataset
@@ -110,5 +110,23 @@ Specify columns for duplicate check (leave empty for all columns):
 Enter column names separated by comma:
 > 
 ```
+
+---
+
+## Example - Generating a Report
+
+1. Generate a report for a dataset:
+```
+pylytics> report my_dataset
+Report generated and saved to: reports/my_dataset_report.txt
+```
+The report includes:
+- Dataset overview (shape, last modified)
+- Column information (types, missing values)
+- Missing values summary
+- Numerical columns summary (all statistics)
+- Categorical columns summary (frequency counts)
+- Analyses performed (filtering, cleaning, etc.)
+- End of file marker
 
 ---

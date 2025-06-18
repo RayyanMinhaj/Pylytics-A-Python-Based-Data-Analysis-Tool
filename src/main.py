@@ -2,6 +2,8 @@ import argparse
 import sys
 from dataset_manager import DatasetManager
 from data_explorer import DataExplorer
+from report_generator import ReportCreator
+                    
 
 # ANSI color code escape sequences
 BLUE = '\033[94m'
@@ -357,13 +359,20 @@ def main():
                     print(f"{YELLOW}Example: report my_dataset{RESET}")
                     print("\n")
                     continue
+                
                 dataset_name = args[0]
+                
                 try:
-                    from report_generator import generate_report
-                    report_path = generate_report(dataset_manager, data_explorer, dataset_name)
+                    
+                    reporter = ReportCreator(dataset_manager, data_explorer)
+                    report_path = reporter.generate_report(dataset_name)
+                    
                     print(f"{GREEN}Report generated and saved to: {report_path}{RESET}")
+                
                 except Exception as e:
                     print(f"{RED}Error generating report: {str(e)}{RESET}")
+            
+            
             
             else:
                 print(f"{RED}Unknown command: {command}{RESET}")
