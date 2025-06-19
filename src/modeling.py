@@ -46,7 +46,7 @@ class BaseModel:
             return X, None
     
     
-    
+    # These functions should be protected
     def save_model(self, model, model_name):
         path = os.path.join(self.models_dir, f"{model_name}.joblib")
         joblib.dump(model, path)
