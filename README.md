@@ -17,7 +17,7 @@ PyLytics/
     |   ├── data_explorer.py    #Core functions for data exploration and analysis
     |   ├── visualizer.py       #Core functions for visualisation
     |   ├── main.py             #Command-line interface logic
-    |   └── report_genrator.py           #Generates a summary report for dataset
+    |   └── report_generator.py           #Generates a summary report for dataset
     ├── tests/        #Will work on it if time allows
     ├── config/     
     |   └── config.json  
@@ -56,6 +56,7 @@ python src/main.py
 - `help` - List all available commands
 - `exit` - Exit the program
 - `report <dataset_name>` - Generate a detailed analysis report for a dataset
+- `visualize <dataset_name>` - Interactive visualization menu (histogram, bar chart, heatmap, scatter plot)
 ---
 
 ### Example - Loading a Dataset
@@ -81,6 +82,8 @@ pylytics> remove my_dataset
 ```
 
 ---
+
+
 
 ## Example - Filtering and Cleaning a Dataset
 
@@ -128,5 +131,33 @@ The report includes:
 - Categorical columns summary (frequency counts)
 - Analyses performed (filtering, cleaning, etc.)
 - End of file marker
+
+---
+
+## Example - Visualization
+
+1. Visualize your data:
+```
+pylytics> visualize my_dataset
+
+Select plot type:
+1. Histogram
+2. Bar Chart
+3. Heatmap
+4. Scatter Plot
+
+Enter your choice (1-4): 4
+
+Available columns: sepal_length, sepal_width, petal_length, petal_width
+Enter the column name for the x-axis: sepal_length
+Enter the column name for the y-axis: petal_width
+Scatter plot for 'petal_width' vs 'sepal_length' generated and saved as 'my_dataset_petal_width_vs_sepal_length_scatter.png'.
+```
+
+**Visualization Options:**
+- **Histogram:** For a single numeric column. Prompts for number of bins.
+- **Bar Chart:** For a single categorical column. Shows top categories.
+- **Heatmap:** Correlation heatmap for all columns (categorical columns are encoded automatically).
+- **Scatter Plot:** For two numeric columns. Prompts for x and y columns.
 
 ---
