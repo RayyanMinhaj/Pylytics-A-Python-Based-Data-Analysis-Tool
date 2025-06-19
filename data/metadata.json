@@ -16,7 +16,7 @@
     },
     "titanic": {
         "file_path": "data\\titanic\\titanic.csv",
-        "rows": 183,
+        "rows": 891,
         "columns": 12,
         "column_names": [
             "PassengerId",
@@ -32,9 +32,7 @@
             "Cabin",
             "Embarked"
         ],
-        "last_modified": "2025-06-19T23:28:16.059073",
-        "analyses_performed": [
-            "Removed rows with missing values"
-        ]
+        "last_modified": "2025-06-20T00:08:43.620086",
+        "analyses_performed": []
     }
 }
