@@ -1,8 +1,11 @@
 import argparse
 import sys
+import os
+import pandas as pd
 from dataset_manager import DatasetManager
 from data_explorer import DataExplorer
 from report_generator import ReportCreator
+from visualizer import Visualizer
                     
 
 # ANSI color code escape sequences
@@ -371,6 +374,96 @@ def main():
                 
                 except Exception as e:
                     print(f"{RED}Error generating report: {str(e)}{RESET}")
+            
+            
+            
+            elif command == "visualize":
+                if len(args) != 1:
+                    print(f"{YELLOW}Usage: visualize <dataset_name>{RESET}")
+                    print(f"{YELLOW}Example: visualize my_dataset{RESET}")
+                    print("\n")
+                    continue
+                
+                dataset_name = args[0]
+                
+                try:
+                    visualizer = Visualizer(dataset_manager, data_explorer)
+                    
+                    print("\nSelect plot type:")
+                    print("1. Histogram")
+                    print("2. Bar Chart")
+                    print("3. Heatmap")
+                    print("4. Scatter Plot")
+                    
+                    choice = input("\nEnter your choice (1-4): ").strip()
+                    
+                    if choice == "1":
+                        # Show available columns
+                        metadata = dataset_manager.metadata.get(dataset_name, {})
+                        columns = metadata.get("column_names", [])
+                        print(f"\nAvailable columns: {', '.join(columns)}")
+                        column_name = input("Enter the column name for the histogram: ").strip()
+                        
+                        # Validate column exists
+                        if column_name not in columns:
+                            print(f"Error: Column '{column_name}' not found in dataset. Please choose from the available columns.")
+                            continue
+                            
+                        bins_input = input("Enter number of bins (default 30): ").strip()
+                        bins = int(bins_input) if bins_input.isdigit() else 30
+                        filepath = visualizer.create_histogram(dataset_name, column_name, bins)
+                        filename = os.path.basename(filepath)
+                        print(f"Histogram for '{column_name}' generated and saved as '{filename}'.")
+                    
+                    elif choice == "2":
+                        # Show available columns
+                        metadata = dataset_manager.metadata.get(dataset_name, {})
+                        columns = metadata.get("column_names", [])
+                        print(f"\nAvailable columns: {', '.join(columns)}")
+                        column_name = input("Enter the column name for the bar chart: ").strip()
+                        
+                        # Validate column exists
+                        if column_name not in columns:
+                            print(f"Error: Column '{column_name}' not found in dataset. Please choose from the available columns.")
+                            continue
+                            
+                        filepath = visualizer.create_bar_chart(dataset_name, column_name)
+                        filename = os.path.basename(filepath)
+                        print(f"Bar chart for '{column_name}' generated and saved as '{filename}'.")
+                    
+                    elif choice == "3":
+                        filepath = visualizer.create_heatmap(dataset_name)
+                        filename = os.path.basename(filepath)
+                        print(f"Heatmap generated and saved as '{filename}'.")
+                    
+                    elif choice == "4":
+                        # Scatter Plot
+                        metadata = dataset_manager.metadata.get(dataset_name, {})
+                        columns = metadata.get("column_names", [])
+                        print(f"\nAvailable columns: {', '.join(columns)}")
+                        x_column = input("Enter the column name for the x-axis: ").strip()
+                        y_column = input("Enter the column name for the y-axis: ").strip()
+                        
+                        # Validate columns exist
+                        if x_column not in columns or y_column not in columns:
+                            print(f"Error: One or both columns not found in dataset. Please choose from the available columns.")
+                            continue
+                        
+                        # Validate columns are numeric
+                        df = dataset_manager.get_dataset(dataset_name)
+                        if not pd.api.types.is_numeric_dtype(df[x_column]) or not pd.api.types.is_numeric_dtype(df[y_column]):
+                            print(f"Error: Both columns must be numeric for a scatter plot.")
+                            continue
+                        
+                        filepath = visualizer.create_scatter_plot(dataset_name, x_column, y_column)
+                        filename = os.path.basename(filepath)
+                        print(f"Scatter plot for '{y_column}' vs '{x_column}' generated and saved as '{filename}'.")
+                    
+                    else:
+                        print(f"{RED}Invalid choice. Please enter a number between 1 and 4.{RESET}")
+                
+                except Exception as e:
+                    print(f"{RED}Error creating plot: {str(e)}{RESET}")
             
             
             

@@ -17,7 +17,7 @@ PyLytics/
     |   ├── data_explorer.py    #Core functions for data exploration and analysis
     |   ├── visualizer.py       #Core functions for visualisation
     |   ├── main.py             #Command-line interface logic
-    |   └── report_genrator.py           #Generates a summary report for dataset
+    |   └── report_generator.py           #Generates a summary report for dataset
     ├── tests/        #Will work on it if time allows
     ├── config/     
     |   └── config.json  
