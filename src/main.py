@@ -7,7 +7,7 @@ from dataset_manager import DatasetManager
 from data_explorer import DataExplorer
 from report_generator import ReportCreator
 from visualizer import Visualizer
-from modeling import LinearRegressionModel, LogisticRegressionModel, KMeansModel
+from modeling import LinearRegressionModel, LogisticRegressionModel, KMeansModel, BaseModel
                     
 
 # ANSI color code escape sequences
@@ -599,8 +599,9 @@ def main():
             
             
             elif command == "predict":
-                model_manager = ModelManager()
-                models = model_manager.list_models()
+                # Use BaseModel directly since we only need list_models and load_model
+                model_instance = BaseModel()
+                models = model_instance.list_models()
                 
                 if not models:
                     print(f"{YELLOW}No trained models found. Please train a model first using the 'model' command.{RESET}")
@@ -623,7 +624,7 @@ def main():
                 
                 model_file = models[model_idx]
                 
-                model = model_manager.load_model(model_file.replace('.joblib',''))
+                model = model_instance.load_model(model_file.replace('.joblib',''))
                 
                 if model is None:
                     print(f"{RED}Model file not found. Please check the model name or train a new model.{RESET}")
