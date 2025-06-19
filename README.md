@@ -1,6 +1,6 @@
 # PyLytics - A Python-Based Data Analysis Tool
 
-PyLytics is a lightweight CLI tool to manage, explore, and visualize CSV datasets with ease, all from your terminal!
+PyLytics is a lightweight CLI tool to manage, explore, visualize, and perform statistical modeling on CSV datasets with ease, all from your terminal!
 
 
 ## Folder Structure
@@ -12,12 +12,16 @@ PyLytics/
     |   └── dataset2/    #Stores dataset2 data (CSV etc)
     |       └── data_2.csv
     ├── reports/       # Stores generated reports (text, CSV, images)
+    ├── graphs/        # Stores generated visualizations
+    ├── models/        # Stores trained machine learning models
+    ├── confusion_matrices/  # Stores confusion matrix plots
     ├── src/          #Stores the main Python source code
     |   ├── dataset_manager.py  #Class for dataset management
     |   ├── data_explorer.py    #Core functions for data exploration and analysis
     |   ├── visualizer.py       #Core functions for visualisation
+    |   ├── modeling.py         #Core functions for statistical modeling
     |   ├── main.py             #Command-line interface logic
-    |   └── report_generator.py           #Generates a summary report for dataset
+    |   └── report_generator.py #Generates a summary report for dataset
     ├── tests/        #Will work on it if time allows
     ├── config/     
     |   └── config.json  
@@ -45,7 +49,7 @@ Start the Program:
 python src/main.py
 ```
 
-### Available Commands (for now!)
+### Available Commands
 
 - `load <file_path> <dataset_name>` - Load a dataset (CSV file)
 - `list` - List all loaded datasets
@@ -53,10 +57,13 @@ python src/main.py
 - `remove <dataset_name>` - Remove a dataset from memory
 - `analyze <dataset_name>` - Interactive data analysis (summary stats, missing data, frequency counts, filtering)
 - `clean <dataset_name>` - Data cleaning (remove duplicates, handle missing values)
-- `help` - List all available commands
-- `exit` - Exit the program
 - `report <dataset_name>` - Generate a detailed analysis report for a dataset
 - `visualize <dataset_name>` - Interactive visualization menu (histogram, bar chart, heatmap, scatter plot)
+- `model <dataset_name>` - Train statistical models (regression, classification, clustering)
+- `predict` - Make predictions using trained models
+- `help` - List all available commands
+- `exit` - Exit the program
+
 ---
 
 ### Example - Loading a Dataset
@@ -84,7 +91,6 @@ pylytics> remove my_dataset
 ---
 
 
-
 ## Example - Filtering and Cleaning a Dataset
 
 1. **Filter a dataset:**
@@ -96,7 +102,7 @@ Select analysis type:
 ...
 4. Filter data
 
-Enter your choice (1-5): 4
+Enter your choice (1-4): 4
 Enter filter condition (e.g., age > 25 and country == "USA"):
 > sepal_length > 5.0
 ```
@@ -159,5 +165,69 @@ Scatter plot for 'petal_width' vs 'sepal_length' generated and saved as 'my_data
 - **Bar Chart:** For a single categorical column. Shows top categories.
 - **Heatmap:** Correlation heatmap for all columns (categorical columns are encoded automatically).
 - **Scatter Plot:** For two numeric columns. Prompts for x and y columns.
+
+---
+
+## Example - Statistical Modeling
+
+1. **Train a Classification Model:**
+```
+pylytics> model my_dataset
+
+Select modeling type:
+1. Linear Regression
+2. Classification (Logistic Regression)
+3. Clustering (KMeans)
+
+Enter your choice (1-3): 2
+
+Available columns: sepal_length, sepal_width, petal_length, petal_width, species
+Enter target column: species
+Enter feature columns (comma-separated, or leave blank for all except target): sepal_length, sepal_width, petal_length, petal_width
+
+Classification model trained and saved as models/my_dataset_species_logreg.joblib
+Accuracy: 0.9667
+Precision: 0.9667
+Recall: 0.9667
+F1 Score: 0.9667
+
+Would you like to save a confusion matrix plot? (y/n): y
+Confusion matrix saved as confusion_matrices/my_dataset_species_logreg_confmat.png
+```
+
+2. **Make Predictions:**
+```
+pylytics> predict
+
+Available models:
+1. my_dataset_species_logreg.joblib
+
+Enter the number of the model to use: 1
+
+Enter feature values for prediction:
+sepal_length: 5.1
+sepal_width: 3.5
+petal_length: 1.4
+petal_width: 0.2
+
+Prediction: 0
+```
+
+**Modeling Options:**
+- **Linear Regression:** For predicting continuous values. Uses R² score for evaluation.
+- **Classification (Logistic Regression):** For predicting categories/classes. Shows accuracy, precision, recall, F1 score, and classification report.
+- **Clustering (KMeans):** For grouping similar data points. Assigns cluster labels to each row.
+
+---
+
+## Requirements
+
+- Python 3.7+
+- pandas >= 2.0.0
+- numpy >= 1.24.0
+- matplotlib >= 3.7.0
+- seaborn >= 0.12.0
+- scikit-learn >= 1.3.0
+- joblib >= 1.3.0
 
 ---

@@ -2,10 +2,12 @@ import argparse
 import sys
 import os
 import pandas as pd
+import numpy as np
 from dataset_manager import DatasetManager
 from data_explorer import DataExplorer
 from report_generator import ReportCreator
 from visualizer import Visualizer
+from modeling import ModelManager
                     
 
 # ANSI color code escape sequences
@@ -52,6 +54,13 @@ def print_help():
     print("    - Show this help message")
     print("exit")
     print("    - Exit the program")
+    
+    # New commands
+    print(f"\n{PURPLE}Modeling Commands:{RESET}")
+    print("model <dataset_name>")
+    print("    - Train a model on the dataset")
+    print("predict")
+    print("    - Predict using a trained model")
     
     print(f"\n{CYAN}====================================={RESET}\n")
 
@@ -466,6 +475,182 @@ def main():
                     print(f"{RED}Error creating plot: {str(e)}{RESET}")
             
             
+            
+            elif command == "model":
+                if len(args) != 1:
+                    print(f"{YELLOW}Usage: model <dataset_name>{RESET}")
+                    print(f"{YELLOW}Example: model my_dataset{RESET}")
+                    print("\n")
+                    continue
+                
+                dataset_name = args[0]
+                df = dataset_manager.get_dataset(dataset_name)
+                
+                if df is None:
+                    print(f"{RED}Dataset '{dataset_name}' not found.{RESET}")
+                    continue
+                
+                model_manager = ModelManager()
+                
+                columns = list(df.columns)
+                print("\nSelect modeling type:")
+                print("1. Linear Regression")
+                print("2. Classification (Logistic Regression)")
+                print("3. Clustering (KMeans)")
+                
+                model_choice = input("Enter your choice (1-3): ").strip()
+                
+                
+                
+                if model_choice == "1":
+                    print(f"\nAvailable columns: {', '.join(columns)}")
+                    target = input("Enter target column: ").strip()
+                    
+                    if target not in columns:
+                        print(f"{RED}Target column not found.{RESET}")
+                        return
+                    
+                    features = input("Enter feature columns (comma-separated, or leave blank for all except target): ").strip()
+                    
+                    if features:
+                        feature_cols = [c.strip() for c in features.split(',') if c.strip() and c.strip() != target] 
+                    
+                    else:
+                        feature_cols = [c for c in columns if c != target]
+                    
+                    
+                    
+                    model_name = f"{dataset_name}_{target}_linreg"
+                    model, score, X_test, y_test, y_pred = model_manager.train_regression(df, feature_cols, target, model_name)
+                    
+                    
+                    print(f"{GREEN}Linear Regression model trained and saved as models/{model_name}.joblib{RESET}")
+                    print(f"R^2 Score: {score:.4f}")
+                
+                
+                
+                elif model_choice == "2":
+                    print(f"\nAvailable columns: {', '.join(columns)}")
+                    target = input("Enter target column: ").strip()
+                    
+                    if target not in columns:
+                        print(f"{RED}Target column not found.{RESET}")
+                        return
+                    
+                    features = input("Enter feature columns (comma-separated, or leave blank for all except target): ").strip()
+                    
+                    if features:
+                        feature_cols = [c.strip() for c in features.split(',') if c.strip() and c.strip() != target]
+                    else:
+                        feature_cols = [c for c in columns if c != target]
+                    
+                    
+                    model_name = f"{dataset_name}_{target}_logreg"
+                    model, acc, prec, rec, f1, report, X_test, y_test, y_pred = model_manager.train_classification(df, feature_cols, target, model_name)
+                    
+                    print(f"{GREEN}Classification model trained and saved as models/{model_name}.joblib{RESET}")
+                    print(f"Accuracy: {acc:.4f}\nPrecision: {prec:.4f}\nRecall: {rec:.4f}\nF1 Score: {f1:.4f}")
+                    print(f"\nClassification Report:\n{report}")
+                    
+                    save_cm = input("Would you like to save a confusion matrix plot? (y/n): ").strip().lower()
+                    
+                    if save_cm == 'y':
+                        cm_path = model_manager.save_confusion_matrix(y_test, y_pred, model_name)
+                        print(f"Confusion matrix saved as {cm_path}")
+                
+                
+                
+                
+                elif model_choice == "3":
+                    print(f"\nAvailable columns: {', '.join(columns)}")
+                    features = input("Enter feature columns for clustering (comma-separated): ").strip()
+                    
+                    if not features:
+                        print(f"{RED}You must specify feature columns for clustering.{RESET}")
+                        return
+                    
+                    feature_cols = [c.strip() for c in features.split(',') if c.strip()]
+                    
+                    n_clusters = input("Enter number of clusters (default 3): ").strip()
+                    n_clusters = int(n_clusters) if n_clusters.isdigit() else 3
+                    
+                    
+                    model_name = f"{dataset_name}_kmeans_{n_clusters}clusters"
+                    model, labels = model_manager.train_clustering(df, feature_cols, n_clusters, model_name)
+                    
+                    
+                    print(f"{GREEN}KMeans clustering model trained and saved as models/{model_name}.joblib{RESET}")
+                    print(f"Cluster labels assigned. Example: {labels[:10]}")
+                
+                
+                
+                else:
+                    print("Exiting modeling menu.")
+                    continue
+
+            
+            
+            
+            elif command == "predict":
+                model_manager = ModelManager()
+                models = model_manager.list_models()
+                
+                if not models:
+                    print(f"{YELLOW}No trained models found. Please train a model first using the 'model' command.{RESET}")
+                    continue
+                
+                print("\nAvailable models:")
+                for idx, m in enumerate(models):
+                    print(f"{idx+1}. {m}")
+                model_choice = input("Enter the number of the model to use: ").strip()
+                
+                if not model_choice.isdigit():
+                    print(f"{RED}Invalid input. Please enter a number corresponding to the model.{RESET}")
+                    continue
+                
+                
+                model_idx = int(model_choice) - 1
+                if model_idx < 0 or model_idx >= len(models):
+                    print(f"{RED}Invalid model selection.{RESET}")
+                    continue
+                
+                model_file = models[model_idx]
+                
+                model = model_manager.load_model(model_file.replace('.joblib',''))
+                
+                if model is None:
+                    print(f"{RED}Model file not found. Please check the model name or train a new model.{RESET}")
+                    continue
+                
+                
+                # Try to infer feature names from model or ask user
+                print("Enter feature values for prediction:")
+                
+                # Try to get feature names from model (works for sklearn linear/logistic regression)
+                feature_names = getattr(model, 'feature_names_in_', None)
+                
+                if feature_names is None:
+                    n_features = int(input("Number of features required: ").strip())
+                    feature_names = [input(f"Feature {i+1} name: ").strip() for i in range(n_features)]
+                
+                
+                feature_values = []
+                
+                for fname in feature_names:
+                    val = input(f"{fname}: ").strip()
+                    try:
+                        val = float(val)
+                    except ValueError:
+                        pass
+                    feature_values.append(val)
+                
+                X_input = np.array(feature_values).reshape(1, -1)
+                
+                try:
+                    pred = model.predict(X_input)
+                    print(f"\n\n{GREEN}Prediction: {pred[0]}{RESET}")
+                except Exception as e:
+                    print(f"{RED}Error making prediction: {str(e)}{RESET}")
             
             else:
                 print(f"{RED}Unknown command: {command}{RESET}")
