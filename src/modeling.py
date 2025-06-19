@@ -85,7 +85,9 @@ class LinearRegressionModel(BaseModel):
         model.fit(X_train, y_train)
         
         y_pred = model.predict(X_test)
-        score = r2_score(y_test, y_pred)
+        score = r2_score(y_test, y_pred) #This is the R^2 score, it is a measure of how well the model fits the data
+        # Thought I'd add here that the rest of the metrics are used for classification tasks (where output is a class/label)
+        # Regression predicts continuous values, so those metrics don't apply.
         
         self.save_model(model, model_name)
         return model, score, X_test, y_test, y_pred

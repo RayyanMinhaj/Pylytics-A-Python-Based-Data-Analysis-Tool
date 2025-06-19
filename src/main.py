@@ -673,6 +673,12 @@ def main():
 
 
 
+# Had i had to class-ify this file, i would have done it like this:
+# Create a PyLytics class that inherits the DataManager, Visualizer, and DataExplorer classes etc.
+# Then for each if statement I would have had a method (possibly private?) that used the class methods to do the respected task
+# Then i would have a run() method at the end which would be the loop that runs the program and have if statements that invoked the methods
+# Inside main, I would just have a PyLytics() object and call the run() method
+
 
 if __name__ == "__main__":
     main() 
