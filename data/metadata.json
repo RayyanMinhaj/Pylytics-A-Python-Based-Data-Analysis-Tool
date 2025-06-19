@@ -1,7 +1,7 @@
 {
     "iris": {
         "file_path": "data\\iris\\iris.csv",
-        "rows": 150,
+        "rows": 43,
         "columns": 6,
         "column_names": [
             "Id",
@@ -11,8 +11,10 @@
             "PetalWidthCm",
             "Species"
         ],
-        "last_modified": "2025-06-18T20:12:23.932628",
-        "analyses_performed": []
+        "last_modified": "2025-06-20T00:37:31.201755",
+        "analyses_performed": [
+            "Removed duplicates on columns: PetalLengthCm"
+        ]
     },
     "titanic": {
         "file_path": "data\\titanic\\titanic.csv",
