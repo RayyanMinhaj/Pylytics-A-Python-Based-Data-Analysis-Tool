@@ -7,7 +7,7 @@ from dataset_manager import DatasetManager
 from data_explorer import DataExplorer
 from report_generator import ReportCreator
 from visualizer import Visualizer
-from modeling import ModelManager
+from modeling import LinearRegressionModel, LogisticRegressionModel, KMeansModel
                     
 
 # ANSI color code escape sequences
@@ -64,6 +64,9 @@ def print_help():
     
     print(f"\n{CYAN}====================================={RESET}\n")
 
+
+
+
 def main():
     dataset_manager = DatasetManager()
     data_explorer = DataExplorer(dataset_manager)
@@ -116,7 +119,7 @@ def main():
                     
 
 
-                    
+                        
             elif command == "view":
                 if len(args) < 1 or len(args) > 2:
                     print(f"{YELLOW}Usage: view <dataset_name> [n_rows]{RESET}")
@@ -350,7 +353,7 @@ def main():
                     
             
             
-            
+                    
             elif command == "remove":
                 if len(args) != 1:
                     print(f"{YELLOW}Usage: remove <dataset_name>{RESET}")
@@ -490,8 +493,6 @@ def main():
                     print(f"{RED}Dataset '{dataset_name}' not found.{RESET}")
                     continue
                 
-                model_manager = ModelManager()
-                
                 columns = list(df.columns)
                 print("\nSelect modeling type:")
                 print("1. Linear Regression")
@@ -521,11 +522,13 @@ def main():
                     
                     
                     model_name = f"{dataset_name}_{target}_linreg"
-                    model, score, X_test, y_test, y_pred = model_manager.train_regression(df, feature_cols, target, model_name)
+                    model_instance = LinearRegressionModel()
+                    model, score, X_test, y_test, y_pred = model_instance.train(df, feature_cols, target, model_name)
                     
                     
-                    print(f"{GREEN}Linear Regression model trained and saved as models/{model_name}.joblib{RESET}")
-                    print(f"R^2 Score: {score:.4f}")
+                    if model is not None:
+                        print(f"{GREEN}Linear Regression model trained and saved as models/{model_name}.joblib{RESET}")
+                        print(f"R^2 Score: {score:.4f}")
                 
                 
                 
@@ -546,17 +549,19 @@ def main():
                     
                     
                     model_name = f"{dataset_name}_{target}_logreg"
-                    model, acc, prec, rec, f1, report, X_test, y_test, y_pred = model_manager.train_classification(df, feature_cols, target, model_name)
+                    model_instance = LogisticRegressionModel()
+                    model, acc, prec, rec, f1, report, X_test, y_test, y_pred = model_instance.train(df, feature_cols, target, model_name)
                     
-                    print(f"{GREEN}Classification model trained and saved as models/{model_name}.joblib{RESET}")
-                    print(f"Accuracy: {acc:.4f}\nPrecision: {prec:.4f}\nRecall: {rec:.4f}\nF1 Score: {f1:.4f}")
-                    print(f"\nClassification Report:\n{report}")
-                    
-                    save_cm = input("Would you like to save a confusion matrix plot? (y/n): ").strip().lower()
-                    
-                    if save_cm == 'y':
-                        cm_path = model_manager.save_confusion_matrix(y_test, y_pred, model_name)
-                        print(f"Confusion matrix saved as {cm_path}")
+                    if model is not None:
+                        print(f"{GREEN}Classification model trained and saved as models/{model_name}.joblib{RESET}")
+                        print(f"Accuracy: {acc:.4f}\nPrecision: {prec:.4f}\nRecall: {rec:.4f}\nF1 Score: {f1:.4f}")
+                        print(f"\nClassification Report:\n{report}")
+                        
+                        save_cm = input("Would you like to save a confusion matrix plot? (y/n): ").strip().lower()
+                        
+                        if save_cm == 'y':
+                            cm_path = model_instance.save_confusion_matrix(y_test, y_pred, model_name)
+                            print(f"Confusion matrix saved as {cm_path}")
                 
                 
                 
@@ -576,11 +581,13 @@ def main():
                     
                     
                     model_name = f"{dataset_name}_kmeans_{n_clusters}clusters"
-                    model, labels = model_manager.train_clustering(df, feature_cols, n_clusters, model_name)
+                    model_instance = KMeansModel()
+                    model, labels = model_instance.train(df, feature_cols, n_clusters, model_name)
                     
                     
-                    print(f"{GREEN}KMeans clustering model trained and saved as models/{model_name}.joblib{RESET}")
-                    print(f"Cluster labels assigned. Example: {labels[:10]}")
+                    if model is not None:
+                        print(f"{GREEN}KMeans clustering model trained and saved as models/{model_name}.joblib{RESET}")
+                        print(f"Cluster labels assigned. Example: {labels[:10]}")
                 
                 
                 
@@ -651,7 +658,7 @@ def main():
                     print(f"\n\n{GREEN}Prediction: {pred[0]}{RESET}")
                 except Exception as e:
                     print(f"{RED}Error making prediction: {str(e)}{RESET}")
-            
+                    
             else:
                 print(f"{RED}Unknown command: {command}{RESET}")
                 print(f"{YELLOW}Type 'help' to see all available commands{RESET}")
